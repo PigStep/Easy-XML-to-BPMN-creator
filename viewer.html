@@ -17,16 +17,15 @@
             position: relative;
         }
 
-        #properties-panel {
+        .djs-palette {
             position: absolute;
-            top: 0;
-            right: 0;
-            width: 300px;
-            height: 100%;
-            background: #f8f8f8;
-            border-left: 1px solid #ccc;
-            overflow-y: auto;
-            display: none;
+            left: 20px;
+            top: 20px;
+            z-index: 5;
+        }
+
+        .djs-context-pad {
+            position: absolute;
             z-index: 10;
         }
 
@@ -153,13 +152,10 @@
     </div>
 
     <!-- Контейнер для BPMN -->
-    <div id="bpmn-container">
-        <div id="properties-panel"></div>
-    </div>
+    <div id="bpmn-container"></div>
 
     <!-- Подключаем библиотеки -->
     <script src="https://unpkg.com/bpmn-js@9.4.0/dist/bpmn-modeler.development.js"></script>
-    <script src="https://unpkg.com/bpmn-js-properties-panel@0.20.0/dist/bpmn-js-properties-panel.umd.js"></script>
 
     <script>
         // Инициализация BPMN viewer/modeler
@@ -177,9 +173,6 @@
             try {
                 viewer = new BpmnJS({
                     container: '#bpmn-container',
-                    propertiesPanel: {
-                        parent: '#properties-panel'
-                    },
                     keyboard: {
                         bindTo: window
                     }
@@ -397,21 +390,18 @@
             const editBtn = document.getElementById('edit-toggle');
             const saveBtn = document.getElementById('save-btn');
             const container = document.getElementById('bpmn-container');
-            const propertiesPanel = document.getElementById('properties-panel');
 
             if (isEditMode) {
                 editBtn.textContent = 'Режим просмотра';
                 editBtn.classList.add('edit-mode');
                 saveBtn.style.display = 'inline-block';
                 container.classList.add('edit-mode');
-                propertiesPanel.style.display = 'block';
-                showMessage('Режим редактирования включен', 'info');
+                showMessage('Режим редактирования включен - используйте палитру слева', 'info');
             } else {
                 editBtn.textContent = 'Режим редактирования';
                 editBtn.classList.remove('edit-mode');
                 saveBtn.style.display = 'none';
                 container.classList.remove('edit-mode');
-                propertiesPanel.style.display = 'none';
                 showMessage('Режим просмотра включен', 'info');
             }
         }
