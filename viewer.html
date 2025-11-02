@@ -82,6 +82,15 @@
             border: 1px solid green;
             border-radius: 3px;
         }
+
+        .info {
+            color: #0066cc;
+            margin: 10px 0;
+            padding: 10px;
+            background: #e6f2ff;
+            border: 1px solid #0066cc;
+            border-radius: 3px;
+        }
     </style>
 </head>
 
@@ -129,28 +138,92 @@
 
     <script>
         // Инициализация BPMN viewer
-        let viewer = new BpmnJS({
-            container: '#bpmn-container'
-        });
+        let viewer;
+
+        // Инициализация с проверкой доступности библиотеки
+        function initializeViewer() {
+            if (typeof BpmnJS === 'undefined') {
+                showMessage('Ошибка: библиотека bpmn-js не загружена. Проверьте подключение к интернету.', 'error');
+                return false;
+            }
+
+            try {
+                viewer = new BpmnJS({
+                    container: '#bpmn-container'
+                });
+                return true;
+            } catch (error) {
+                showMessage('Ошибка инициализации BPMN viewer: ' + error.message, 'error');
+                console.error('Ошибка инициализации:', error);
+                return false;
+            }
+        }
 
         // Пример BPMN XML по умолчанию
         const defaultXML = `<?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
   <bpmn:process id="Process_1" isExecutable="false">
-    <bpmn:startEvent id="StartEvent_1" name="Начало процесса" />
-    <bpmn:task id="Task_1" name="Первая задача" />
-    <bpmn:task id="Task_2" name="Вторая задача" />
-    <bpmn:endEvent id="EndEvent_1" name="Конец процесса" />
+    <bpmn:startEvent id="StartEvent_1" name="Начало процесса">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Task_1" name="Первая задача">
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_2" name="Вторая задача">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="EndEvent_1" name="Конец процесса">
+      <bpmn:incoming>Flow_3</bpmn:incoming>
+    </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Task_1" />
     <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_1" targetRef="Task_2" />
     <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_2" targetRef="EndEvent_1" />
   </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">
+      <bpmndi:BPMNShape id="BPMNShape_StartEvent_1" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="130" y="145" width="80" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_1" bpmnElement="Task_1">
+        <dc:Bounds x="250" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Task_2" bpmnElement="Task_2">
+        <dc:Bounds x="410" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EndEvent_1" bpmnElement="EndEvent_1">
+        <dc:Bounds x="572" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="555" y="145" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_Flow_1" bpmnElement="Flow_1">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="250" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_Flow_2" bpmnElement="Flow_2">
+        <di:waypoint x="350" y="120" />
+        <di:waypoint x="410" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_Flow_3" bpmnElement="Flow_3">
+        <di:waypoint x="510" y="120" />
+        <di:waypoint x="572" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
 </bpmn:definitions>`;
 
         // Загружаем пример при старте
         window.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('xml-input').value = defaultXML;
-            loadXML(defaultXML);
+            // Инициализируем viewer
+            if (initializeViewer()) {
+                document.getElementById('xml-input').value = defaultXML;
+                loadXML(defaultXML);
+            }
         });
 
         // Функции управления вкладками
@@ -172,6 +245,16 @@
 
         // Основная функция загрузки XML
         function loadXML(xml) {
+            if (!viewer) {
+                showMessage('BPMN viewer не инициализирован', 'error');
+                return;
+            }
+
+            if (!xml || xml.trim() === '') {
+                showMessage('Пустой XML для загрузки', 'error');
+                return;
+            }
+
             showMessage('Загрузка BPMN...', 'info');
 
             viewer.importXML(xml)
@@ -181,7 +264,14 @@
                 })
                 .catch(err => {
                     console.error('Ошибка загрузки BPMN:', err);
-                    showMessage('Ошибка загрузки BPMN: ' + err.message, 'error');
+                    let errorMessage = err.message || 'Неизвестная ошибка';
+
+                    // Дополнительная информация об ошибке
+                    if (err.warnings && err.warnings.length > 0) {
+                        errorMessage += ' (Предупреждения: ' + err.warnings.join(', ') + ')';
+                    }
+
+                    showMessage('Ошибка загрузки BPMN: ' + errorMessage, 'error');
                 });
         }
 
