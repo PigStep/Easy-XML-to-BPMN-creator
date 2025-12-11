@@ -1,12 +1,14 @@
 import logging
 from pathlib import Path
 
-XML_BASE_BPMN_PATH = Path(__file__).parent / "data" / "base_bpmn_diagram.xml"
+XML_BASE_BPMN_PATH = (
+    Path(__file__).parent.parent / "data" / "XMLs" / "base_bpmn_diagram.xml"
+)
 
 logger = logging.getLogger(__name__)
 
 
-def get_base_diagramm():
+def get_example_diagramm():
     try:
         with open(XML_BASE_BPMN_PATH, encoding="utf-8", mode="r") as f:
             return f.read()

@@ -1,24 +1,24 @@
 import asyncio
 import logging
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from src.get_base_diagram import get_base_diagramm
+from src.api_routes import router as api_router
 
-app = FastAPI()
-app.mount("/", StaticFiles(directory="static", html=True), name="index.html")
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-
-@app.post("/api/generate")
-async def generate_bpmn():
-    """
-    Generate BPMN XML code to render with bpmn-js
-    """
+app = FastAPI(title="Vibe BPMN")
+app.include_router(api_router, prefix="/api")
+app.mount("/static", StaticFiles(directory="static", html=True), name="static")
 
 
-@app.get("/api/base-bpmn-xml")
-async def get_base_bpmn_xml():
-    """
-    Get the base BPMN XML structure
-    """
-    xml = asyncio.to_thread(get_base_diagramm())
-    return {"xml": xml}
+@app.get("/health")
+async def health():
+    logger.info("Health check successful")
+    return {"status": "OK"}
+
+
+@app.get("/")
+async def read_root():
+    return FileResponse("static/index.html")
