@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe BPMN Editor AI powered</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@14.0.0/dist/assets/diagram-js.css" />
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@14.0.0/dist/assets/bpmn-js.css" />
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@14.0.0/dist/assets/bpmn-font/css/bpmn.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <header class="app-header">
+        <div class="logo">
+            <i class="fas fa-project-diagram"></i> Vibe BPMN Studio
+        </div>
+        <div class="toolbar">
+            <input type="file" id="file-input" accept=".bpmn,.xml" hidden>
+            <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">
+                <i class="fas fa-folder-open"></i> Открыть
+            </button>
+            <button class="btn btn-secondary" id="download-bpmn">
+                <i class="fas fa-download"></i> Скачать .bpmn
+            </button>
+            <button class="btn btn-secondary" id="download-svg">
+                <i class="fas fa-image"></i> Скачать .svg
+            </button>
+
+            <div class="divider"></div>
+
+            <button class="btn btn-icon" id="zoom-out" title="Уменьшить"><i class="fas fa-minus"></i></button>
+            <button class="btn btn-icon" id="fit-viewport" title="Подогнать"><i
+                    class="fas fa-compress-arrows-alt"></i></button>
+            <button class="btn btn-icon" id="zoom-in" title="Увеличить"><i class="fas fa-plus"></i></button>
+        </div>
+    </header>
+
+    <main class="layout-container">
+        <section class="canvas-area">
+            <div id="bpmn-container"></div>
+        </section>
+
+        <aside class="sidebar">
+            <div class="sidebar-tabs">
+                <button class="tab-btn active" data-target="chat-panel">
+                    <i class="fas fa-robot"></i> AI Ассистент
+                </button>
+                <button class="tab-btn" data-target="xml-panel">
+                    <i class="fas fa-code"></i> XML
+                </button>
+            </div>
+
+            <div id="chat-panel" class="sidebar-content active">
+                <div class="chat-history" id="chat-history">
+                    <div class="message bot">
+                        <div class="msg-content">Привет! Я помогу создать диаграмму. Напиши, что добавить (например,
+                            "Добавь задачу 'Проверка отчета'").</div>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Ваш запрос...">
+                    <button id="send-chat" class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+
+            <div id="xml-panel" class="sidebar-content">
+                <div class="xml-controls">
+                    <span class="info-text">Редактирование источника</span>
+                    <button id="apply-xml" class="btn btn-sm btn-primary">Применить</button>
+                </div>
+                <textarea id="xml-editor" spellcheck="false"></textarea>
+            </div>
+        </aside>
+    </main>
+
+    <script src="https://unpkg.com/bpmn-js@14.0.0/dist/bpmn-modeler.development.js"></script>
+
+    <!-- Подключаем все необходимые скрипты в правильном порядке -->
+    <script src="/static/js/bpmn-viewer.js"></script>
+    <script src="/static/js/bpmn-controls.js"></script>
+    <script src="/static/js/ui-manager.js"></script>
+    <script src="/static/js/bot-responder.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+
+</html>
