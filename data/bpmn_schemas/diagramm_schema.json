@@ -1,32 +1,33 @@
 {
     "type": "object",
     "required": [
-        "id",
-        "participants"
+        "elements"
     ],
     "additionalProperties": false,
     "properties": {
-        "id": {
-            "type": "string"
-        },
-        "participants": {
+        "elements": {
             "type": "array",
             "items": {
                 "type": "object",
                 "required": [
                     "id",
-                    "processRef"
+                    "bpmnElement",
+                    "kind"
                 ],
                 "additionalProperties": false,
                 "properties": {
                     "id": {
                         "type": "string"
                     },
-                    "name": {
+                    "bpmnElement": {
                         "type": "string"
                     },
-                    "processRef": {
-                        "type": "string"
+                    "kind": {
+                        "type": "string",
+                        "enum": [
+                            "shape",
+                            "edge"
+                        ]
                     }
                 }
             }
