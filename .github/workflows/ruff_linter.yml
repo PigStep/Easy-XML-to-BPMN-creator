@@ -22,13 +22,13 @@ jobs:
     - name: Ruff lint (SARIF)
       run: ruff check . --output-format sarif > ruff.sarif || true
 
-    - name: Fail CI on Ruff issues
-      run: |
-        ruff check .
-        ruff format --check .
-
     - name: Upload Ruff SARIF
       uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: ruff.sarif
+
+    - name: Fail CI on Ruff issues
+      run: |
+        ruff check .
+        ruff format --check .
 
