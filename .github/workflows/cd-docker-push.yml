@@ -1,16 +1,18 @@
-name: CI - build & checks
+name: CD - build & push image
 
 on:
   pull_request:
+    types: [closed]
     branches: [ "main" ]
 
 env:
   IMAGE_NAME: vibe-bpmn
-  REGISTRY: docker.io
-  DOCKERHUB_USERNAME: pigstep
+  REGISTRY: docker.io 
+  DOCKERHUB_USERNAME: pigstep 
 
 jobs:
   build:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
@@ -31,6 +33,6 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:ci-latest
+            ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max

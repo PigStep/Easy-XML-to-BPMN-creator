@@ -10,4 +10,4 @@ __pycache__
 .ipnyb
 .ipynb_checkpoints
 
-\data\XMLs\test_schemas
+/data/XMLs/test_schemas
