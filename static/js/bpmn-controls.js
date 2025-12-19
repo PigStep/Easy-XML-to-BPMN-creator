@@ -1,11 +1,10 @@
-import config from "./config";
 /**
  * Manage save and load operations
  */
 class BPMNControls {
     constructor(viewer) {
         this.viewer = viewer;
-        this.apiUrl = config.API_URL;
+        this.apiUrl = window.AppConfig.API_URL;
     }
 
     async loadExampleFromServer() {
