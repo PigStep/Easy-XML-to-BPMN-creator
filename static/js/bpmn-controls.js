@@ -4,7 +4,7 @@
 class BPMNControls {
     constructor(viewer) {
         this.viewer = viewer;
-        this.apiUrl = 'http://127.0.0.1:8000/api';
+        this.apiUrl = window.AppConfig.API_URL;
     }
 
     async loadExampleFromServer() {
