@@ -1,10 +1,16 @@
 # Vibe BPMN Studio
 
+[![CI/CD Pipeline](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-blue?style=for-the-badge&logo=github)](https://github.com/PigStep/Easy-XML-to-BPMN-creator/actions)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue?style=for-the-badge&logo=docker)](https://hub.docker.com/repository/docker/pigstep/vibe-bpmn/general)
+[![Python 3.13](https://img.shields.io/badge/Python-3.13+-green?style=for-the-badge&logo=python)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Latest-teal?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![BPMN-JS API](https://img.shields.io/badge/BPMN-JS-yellow?style=for-the-badge&logo=bpmn-js)](https://bpmn.io/toolkit/bpmn-js/walkthrough/)
+
 A modern web application for creating, viewing, and editing BPMN diagrams (Business Process Model and Notation) with AI-powered assistant.
 
 ## 📋 Description
 
-BPMN Creator offers a user‑friendly web interface for working with BPMN diagrams. The application allows users to create new diagrams, edit existing ones, import from files or text, and export results in various formats.
+Vibe BPMN Studio offers a user‑friendly web interface for working with BPMN diagrams. The application allows users to create new diagrams, edit existing ones, import from files or text, and export results in various formats.
 
 ## ✨ Features
 
@@ -25,6 +31,10 @@ BPMN Creator offers a user‑friendly web interface for working with BPMN diagra
 - **BPMN Library**: bpmn-js v14.0.0
 - **Styling**: Modern CSS with Custom Properties
 - **Package Manager**: UV (modern Python package manager)
+- **CI/CD**: GitHub Actions with Docker integration
+- **Code Quality**: ruff linter, Hadolint for Docker files
+
+> **🚀 CI/CD Integration:** This project features fully automated CI/CD pipelines with GitHub Actions, including Docker image building, automated testing, code linting (ruff), and Hadolint for Docker files. All changes are automatically tested and deployed!
 
 ## 📦 Installation and Setup
 
@@ -41,7 +51,7 @@ BPMN Creator offers a user‑friendly web interface for working with BPMN diagra
 
    ```bash
    git clone <repository-url>
-   cd bpmn-creator
+   cd vibe-bpmn-studio
    ```
 
 2. **Install dependencies with UV**:
@@ -80,7 +90,7 @@ Alternatively, you can run the application using Docker:
 2. **Run the container**:
 
    ```bash
-   docker run -d -p 8000:8000 --name bpmn-creator pigstep/vibe-bpmn:latest
+   docker run -d -p 8000:8000 --name vibe-bpmn-studio pigstep/vibe-bpmn:latest
    ```
 
 3. **Access the application**:
@@ -90,7 +100,7 @@ Alternatively, you can run the application using Docker:
 
 ### Core Functions
 
-#### 1. Working with AI Assistant
+#### 1. Working with AI Assistant (will be added sooner)
 
 - Navigate to **AI Ассистент** tab in the sidebar
 - Type your request in natural language (e.g., "Add task 'Review Document'")
@@ -134,7 +144,7 @@ The application loads with a sample diagram that includes:
 ## 📁 Project Structure
 
 ```bash
-bpmn-creator/
+vibe-bpmn-studio/
 ├── src/                    # Python source code
 │   ├── api_routes.py       # FastAPI routes
 │   ├── get_example_diagram.py  # Example diagram loader
@@ -161,7 +171,38 @@ bpmn-creator/
 └── README.md               # Project documentation
 ```
 
-## 🏗️ Arhitecture
+## 🔄 CI/CD Pipeline
+
+This project features a comprehensive CI/CD setup with GitHub Actions:
+
+### Automated Workflows
+
+- **🔨 Continuous Integration**:
+  - Docker image building and testing
+  - Python code linting with ruff
+  - Docker file validation with Hadolint
+- **🚀 Continuous Deployment**:
+  - Automated Docker image pushes
+  - Multi-stage deployment pipeline
+  - Automated testing on every push
+
+### Available Workflows
+
+1. `ci-docker-build.yml` - Builds and tests Docker images
+2. `ruff_linter.yml` - Python code quality checks
+3. `docker_hadolint.yml` - Docker file security and best practices validation
+4. `cd-docker-push.yml` - Automated Docker image deployment
+5. `cd-render-push.yml` - Static site deployment pipeline
+
+### Benefits
+
+- ✅ Automatic testing on every commit
+- ✅ Code quality enforcement
+- ✅ Secure Docker practices
+- ✅ One-click deployment
+- ✅ Consistent development environment
+
+## 🏗️ Arhitecture (Expected)
 
 ```bash
 ┌─────────────────────────────────────┐
@@ -253,13 +294,28 @@ This project is released under the MIT license. See the `LICENSE` file for detai
 
 ## TO-DO's
 
+### ✅ Completed
+
 - [x] Implement BPMN creating from XML-code
-- [ ] Implement AI assistant diagramm creation
-- [ ] Implement AI assistant diagramm editing
+- [x] Implement GitHub Actions CI/CD pipeline
+- [x] Create modern web interface with bpmn-js
+- [x] Implement file upload/download functionality
+- [x] Add zoom and viewport controls
+- [x] Create basic AI chat interface
+
+### 🚧 In Progress
+
+- [ ] Implement full AI assistant BPMN generation
 - [ ] Implement XML code validation
-- [ ] Implement database persistence
+- [ ] Add database persistence for diagrams
+
+### 📋 Planned Features
+
 - [ ] Add support for additional file formats (PNG, PDF)
-- [ ] Implement real‑time collaborative editing
+- [ ] Add user authentication and diagram sharing
+- [ ] Create diagram templates library
+- [ ] Implement advanced BPMN element types
+- [ ] Add process simulation capabilities
 
 ## 📞 Support
 
@@ -277,5 +333,5 @@ If you have questions or suggestions:
 
 ---
 
-**Version**: 0.1.0
+**Version**: 0.1.0-alpha
 **Last Updated**: December 2025
