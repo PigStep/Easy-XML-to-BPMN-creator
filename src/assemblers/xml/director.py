@@ -63,3 +63,10 @@ class BpmnDirector:
 
     def to_string(self) -> str:
         return self.builder.to_string()
+
+    def save_to_file(self, path: str) -> bool:
+        try:
+            self.builder.save_to_file(path)
+        except Exception as e:
+            raise ValueError(f"Error saving XML file: {e}")
+        return True
