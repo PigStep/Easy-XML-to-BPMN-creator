@@ -1,4 +1,4 @@
-from typing import Optional, Dict, List
+from typing import Optional
 from lxml import etree
 import logging
 from .base_xml import BaseXmlBuilder
