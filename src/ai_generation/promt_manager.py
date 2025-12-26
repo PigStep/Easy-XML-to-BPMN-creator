@@ -66,3 +66,10 @@ class PromptManager:
 
         template = Template(raw_template)
         return template.render(**kwargs)
+
+
+manager = PromptManager()
+
+
+def get_prompt_manager() -> PromptManager:
+    return manager

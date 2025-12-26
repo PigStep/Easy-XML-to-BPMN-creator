@@ -14,7 +14,7 @@ class LLMClient:
         self.model_name = model_name
         self.behaivour_promt = behaivour_promt
 
-    def generate_response(
+    def _generate_response(
         self,
         prompt: str,
         response_format: dict | None = None,
@@ -82,7 +82,7 @@ class LLMClient:
         str | None
             The JSON response as a string if the model returns a valid response; otherwise, None.
         """
-        return self.generate_response(
+        return self._generate_response(
             prompt,
             {
                 "type": "json_schema",
@@ -103,6 +103,6 @@ class LLMClient:
         Generates a text-formatted response from the LLM based on the provided prompt.
         Offer a choice of reasoning effort levels.
         """
-        return self.generate_response(
+        return self._generate_response(
             prompt, extra_body={"reasoning": {"effort": reasoning_mode}}
         )
