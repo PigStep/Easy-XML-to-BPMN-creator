@@ -26,7 +26,6 @@
                 "type": "object",
                 "required": [
                     "step_key",
-                    "target_schema_name",
                     "system_instruction",
                     "task_context"
                 ],
@@ -41,10 +40,6 @@
                             "layout"
                         ],
                         "description": "Strict execution order: collaboration -> process -> flows -> diagramm -> layout"
-                    },
-                    "target_schema_name": {
-                        "type": "string",
-                        "description": "Name of the JSON schema the sub-agent must validate against (e.g., 'collaboration.json')"
                     },
                     "system_instruction": {
                         "type": "string",
