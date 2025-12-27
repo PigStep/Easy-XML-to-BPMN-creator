@@ -21,3 +21,9 @@ templates:
     - Gateways must have proper split/merge logic.
     - Do not invent new Nodes. Connect only what exists in the input.
     - Output ONLY raw JSON.
+    
+    ### CRITICAL OUTPUT RULES
+    1. **NO MARKDOWN:** Do not use markdown formatting. Do not use code blocks (like ```json).
+    2. **RAW JSON ONLY:** Your response must start with `{` and end with `}`.
+    3. **STRICT SCHEMA ADHERENCE:** You must use the EXACT field names defined in the schema (e.g., use "execution_steps", NOT "execution_plan").
+    4. **NO CHATTER:** Do not add introductions like "Here is the plan". Just the JSON string.

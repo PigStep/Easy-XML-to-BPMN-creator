@@ -21,5 +21,6 @@ def getBpmnClient():
 
 class BPMNState(TypedDict):
     messages: Annotated[list[str], operator.add]
+    generated_jsons: Annotated[List[dict], operator.add]
     plan: List[dict]
     execution_step: int

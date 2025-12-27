@@ -1,27 +1,37 @@
 import json
 import logging
+import re
 
-from ..state import getBpmnClient, BPMNState
+from ..state import BPMNState
 from src.ai_generation.llm_client import LLMClient
-from src.ai_generation.managers.promt import get_prompt_manager
-from src.ai_generation.managers.json_schema import get_json_schema_namager
+from src.ai_generation.managers.promt import PromptManager
+from src.ai_generation.managers.json_schema import JsonSchemaManager
 
 logger = logging.getLogger(__name__)
 
 
+def parse_llm_json(llm_output: str):
+    # 1. Remove markdown code blocks ```json ... ``` or just ``` ... ```
+    clean_text = re.sub(r"```(json)?", "", llm_output, flags=re.IGNORECASE)
+    clean_text = clean_text.strip()
+
+    # 2. If any stray backticks remain at the end
+    clean_text = clean_text.replace("```", "")
+
+    try:
+        return json.loads(clean_text)
+    except json.JSONDecodeError as e:
+        print(f"JSON Error: {e}")
+        print(f"Raw content: {clean_text}")
+        return None
+
+
 def plan(
     state: BPMNState,
-    prompt_manager=None,
-    schema_manager=None,
-    llm: LLMClient = None,
+    prompt_manager: PromptManager,
+    schema_manager: JsonSchemaManager,
+    llm: LLMClient,
 ) -> BPMNState:
-    # Define default
-    if llm is None:
-        llm = getBpmnClient()
-    if prompt_manager is None:
-        prompt_manager = get_prompt_manager()
-    if schema_manager is None:
-        schema_manager = get_json_schema_namager()
 
     # get message
 
@@ -37,5 +47,6 @@ def plan(
         logger.warning("Error while generating response. JSON is not valid")
         return state
 
-    plan = json.loads(response)["plan"]
+    logger.info("Plan response generated, plan length: %s", len(response))
+    plan = parse_llm_json(response)["execution_steps"]
     return {**state, "messages": [response], "plan": plan}

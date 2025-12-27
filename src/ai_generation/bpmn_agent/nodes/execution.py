@@ -16,18 +16,19 @@ def execute(
     state: BPMNState,
     llm: LLMClient,
     prompt_manager: PromptManager,
-    json_schema_manager: JsonSchemaManager,
+    schema_manager: JsonSchemaManager,
 ) -> BPMNState:
     # Get plan from state
     plan_dict = state["plan"]
     step_index = state["execution_step"]
 
     # Get step from plan
-    current_step = plan_dict[step_index]["agent"]
-    step_intent = plan_dict[step_index]["reason"]
+    current_step = plan_dict[step_index]["step_key"]
+    system_promt = plan_dict[step_index]["system_instruction"]
+    step_intent = plan_dict[step_index]["task_context"]
+    logger.info("Running %s step '%s'", current_step, step_intent)
 
     # Generate reply
-    schema = json_schema_manager.get_schema(current_step)
-    system_promt = prompt_manager.get_prompt(step_intent, "system")
+    schema = schema_manager.get_schema(current_step)
     response = llm.generate_response_json_based(step_intent, schema, system_promt)
     return {**state, "messages": [response], "execution_step": step_index + 1}
