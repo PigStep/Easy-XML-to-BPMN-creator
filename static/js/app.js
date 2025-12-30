@@ -142,7 +142,7 @@
 
             addMessage(text, true);
             chatInput.value = '';
-            addMessage('<i>Understood! Thinking about your response. Please wait..</i>');
+            addMessage('Understood! Thinking about your response. Please wait..');
 
             // Use BotResponder to generate a response
             try {
