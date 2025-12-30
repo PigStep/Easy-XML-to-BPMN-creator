@@ -142,11 +142,12 @@
 
             addMessage(text, true);
             chatInput.value = '';
+            addMessage('<i>Understood! Thinking about your response. Please wait..</i>');
 
             // Use BotResponder to generate a response
             try {
                 const botResponse = await botResponder.generateResponseAsync(text);
-                addMessage(botResponse);
+                // addMessage(botResponse); #TODO: Send stream message of generation
 
                 // Try to find XML structure in the response
                 const xmlMatch = botResponse.match(/<\?xml[\s\S]*?<\/bpmn:definitions>|<bpmn:definitions[\s\S]*?<\/bpmn:definitions>/);
@@ -157,9 +158,7 @@
                     const cleanXml = xmlContent.replace(/^```xml\s*/, '').replace(/```$/, '');
 
                     // Call update function
-                    await updateDiagram(cleanXml); // Используем cleanXml
-
-                    addMessage('<i>Diagram was automatically updated.</i>');
+                    await updateDiagram(cleanXml);
                 }
             } catch (error) {
                 console.error('Error generating bot response:', error);

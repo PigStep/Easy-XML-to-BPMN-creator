@@ -4,6 +4,7 @@ from functools import partial
 from ...llm_client import get_llm_client
 from .state import SimpleBPMNAgent
 from .get_bpmn_node import generate_bpmn
+from ....schemas import SUserInputData
 
 
 llm = get_llm_client()
@@ -27,9 +28,9 @@ def get_agent_answer(initial_state: dict) -> dict:
     return result
 
 
-def invoke_agent(user_input: str) -> str:
+def invoke_agent(user_input: SUserInputData) -> str:
     initial_state = {
-        "user_input": user_input,
+        "user_input": user_input.user_input,
         "previous_stage": "",
     }
     return get_agent_answer(initial_state)

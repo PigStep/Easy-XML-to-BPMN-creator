@@ -14,12 +14,15 @@ logger = logging.getLogger(__name__)
 
 
 @router.get("/generate")
-async def generate_bpmn(user_data: SUserInputData) -> SAgentOutput:
+async def generate_bpmn(user_input: str) -> SAgentOutput:
     """
     Generate BPMN XML code to render with bpmn-js
     """
+    user_data = SUserInputData(user_input=user_input)
     xml = await asyncio.to_thread(invoke_agent, user_data)
-    return {"xml": xml}
+    return {
+        "output": xml.get("previous_answer", "Sorry, tech problem. Please retry later.")
+    }
 
 
 @router.get("/example-bpmn-xml")

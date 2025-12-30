@@ -7,7 +7,6 @@ class BotResponder {
     async generateResponse(userMessage) {
         try {
             // 1. Construct URL with parameters
-            // encodeURIComponent is important to avoid breaking URL with special characters
             const queryParams = new URLSearchParams({
                 user_input: userMessage
             });
