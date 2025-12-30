@@ -9,14 +9,14 @@ MODEL_NAME = settings.OPENROUTER_MODEL_NAME
 
 
 class LLMClient:
-    def __init__(self, client: OpenAI, model_name: str, behaivour_promt: str):
+    def __init__(self, client: OpenAI, model_name: str):
         self.client = client
         self.model_name = model_name
-        self.behaivour_promt = behaivour_promt
 
     def generate_response(
         self,
         prompt: str,
+        system_prompt: str,
         response_format: dict | None = None,
         extra_body: dict | None = None,
     ) -> str | None:
@@ -27,6 +27,8 @@ class LLMClient:
         ----------
         prompt : str
             The user prompt to send to the model.
+        system_prompt : str
+           The system prompt to send as the initial message to the model.
         response_format : dict | None, optional
             The format for the model's response
             ```{
@@ -50,7 +52,7 @@ class LLMClient:
         response = self.client.chat.completions.create(
             model=self.model_name,
             messages=[
-                {"role": "system", "content": self.behaivour_promt},
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": prompt},
             ],
             response_format=response_format if response_format else None,
@@ -61,6 +63,7 @@ class LLMClient:
     def generate_response_json_based(
         self,
         prompt: str,
+        system_prompt: str,
         json_schema: dict,
         reasoning_mode: Literal["none", "minimal", "low", "medium", "high"] = "none",
     ) -> str | None:
@@ -71,6 +74,8 @@ class LLMClient:
         ----------
         prompt : str
             The user prompt to be sent to the model.
+        system_prompt : str
+            The system prompt to be sent as the initial message to the model.
         json_schema : dict
             A JSON Schema dict that defines the expected structure of the model's output.
         reasoning_mode : Literal["none", "minimal", "low", "medium", "high"], optional
@@ -84,6 +89,7 @@ class LLMClient:
         """
         return self.generate_response(
             prompt,
+            system_prompt,
             {
                 "type": "json_schema",
                 "json_schema": {
@@ -97,6 +103,7 @@ class LLMClient:
     def generate_response_text_based(
         self,
         prompt: str,
+        system_prompt: str,
         reasoning_mode: Literal["none", "minimal", "low", "medium", "high"] = "none",
     ) -> str:
         """
@@ -104,5 +111,16 @@ class LLMClient:
         Offer a choice of reasoning effort levels.
         """
         return self.generate_response(
-            prompt, extra_body={"reasoning": {"effort": reasoning_mode}}
+            prompt, system_prompt, extra_body={"reasoning": {"effort": reasoning_mode}}
         )
+
+
+raw_client = OpenAI(
+    api_key=AI_API_KEY,
+    base_url="https://openrouter.ai/api/v1",
+)
+llm_client = LLMClient(raw_client, MODEL_NAME)
+
+
+def get_llm_client():
+    return llm_client
