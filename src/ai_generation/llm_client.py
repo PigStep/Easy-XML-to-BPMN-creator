@@ -26,9 +26,9 @@ class LLMClient:
         Parameters
         ----------
         prompt : str
-            User prompt to be sent to the model.
-        system_prompt : str | None, optional
-            Additional system prompt that will replace the base system prompt.
+            The user prompt to send to the model.
+        system_prompt : str
+           The system prompt to send as the initial message to the model.
         response_format : dict | None, optional
             Response format specification. Example:
             ```
@@ -52,10 +52,7 @@ class LLMClient:
         response = self.client.chat.completions.create(
             model=self.model_name,
             messages=[
-                {
-                    "role": "system",
-                    "content": system_prompt,
-                },
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": prompt},
             ],
             response_format=response_format if response_format else None,
@@ -66,6 +63,7 @@ class LLMClient:
     def generate_response_json_based(
         self,
         prompt: str,
+        system_prompt: str,
         json_schema: dict,
         system_promt: str,
         reasoning_mode: Literal["none", "minimal", "low", "medium", "high"] = "none",
@@ -77,6 +75,8 @@ class LLMClient:
         ----------
         prompt : str
             The user prompt to be sent to the model.
+        system_prompt : str
+            The system prompt to be sent as the initial message to the model.
         json_schema : dict
             A JSON Schema dict that defines the expected structure of the model's output.
         system_promt : str | None, optional
@@ -106,6 +106,7 @@ class LLMClient:
     def generate_response_text_based(
         self,
         prompt: str,
+        system_prompt: str,
         reasoning_mode: Literal["none", "minimal", "low", "medium", "high"] = "none",
     ) -> str:
         """
@@ -115,3 +116,14 @@ class LLMClient:
         return self._generate_response(
             prompt, extra_body={"reasoning": {"effort": reasoning_mode}}
         )
+
+
+raw_client = OpenAI(
+    api_key=AI_API_KEY,
+    base_url="https://openrouter.ai/api/v1",
+)
+llm_client = LLMClient(raw_client, MODEL_NAME)
+
+
+def get_llm_client():
+    return llm_client

@@ -33,6 +33,7 @@ Vibe BPMN Studio offers a user‑friendly web interface for working with BPMN di
 - **Package Manager**: UV (modern Python package manager)
 - **CI/CD**: GitHub Actions with Docker integration
 - **Code Quality**: ruff linter, Hadolint for Docker files
+- **AI**: LangGraph + OpenRouter free tier models
 
 > **🚀 CI/CD Integration:** This project features fully automated CI/CD pipelines with GitHub Actions, including Docker image building, automated testing, code linting (ruff), and Hadolint for Docker files. All changes are automatically tested and deployed!
 
@@ -100,12 +101,14 @@ Alternatively, you can run the application using Docker:
 
 ### Core Functions
 
-#### 1. Working with AI Assistant (will be added sooner)
+#### 1. Working with AI Assistant
 
 - Navigate to **AI Ассистент** tab in the sidebar
 - Type your request in natural language (e.g., "Add task 'Review Document'")
 - AI will help generate and modify BPMN diagrams
-- Example: "Create a process with start event, approval task, and end event"
+- Example: "Create a process chain of Touristic company"
+
+AI generation powered by LangGraph and Open router free tier model for intelligent BPMN creation.
 
 #### 2. Diagram Upload
 
@@ -145,30 +148,43 @@ The application loads with a sample diagram that includes:
 
 ```bash
 vibe-bpmn-studio/
-├── src/                    # Python source code
-│   ├── api_routes.py       # FastAPI routes
+├── src/                        # Python source code
+│   ├── api_routes.py           # FastAPI routes
 │   ├── get_example_diagram.py  # Example diagram loader
-│   └── schemas.py          # Pydantic schemas
-├── static/                 # Frontend assets
-│   ├── index.html          # Main application interface
+│   ├── schemas.py              # Pydantic schemas
+│   ├── ai_generation/          # AI agent (LangGraph)
+│   │   ├── llm_client.py       # OpenAI LLM client
+│   │   ├── promts.py           # System prompts
+│   │   └── bpmn_agent/         # BPMN generation agent
+│   │       └── simple/         # Simple agent implementation
+│   │           ├── agent.py    # Main agent logic
+│   │           ├── state.py    # Agent state
+│   │           └── get_bpmn_node.py
+│   └── assemblers/             # XML/JSON generators
+│       ├── xml/                # XML assembly
+│       │   ├── base_xml.py     # Base XML builder
+│       │   ├── bpmn.py         # BPMN XML assembler
+│       │   └── director.py     # XML director
+│       └── json/               # JSON assembly
+│           ├── base.py         # Base JSON assembler
+│           └── bpmn.py         # BPMN JSON assembler
+├── static/                     # Frontend assets
+│   ├── index.html              # Main application interface
 │   ├── css/
-│   │   └── style.css       # Modern styling
-│   └── js/                 # JavaScript modules
-│       ├── app.js          # Main application logic
-│       ├── bpmn-viewer.js  # BPMN viewer management
-│       ├── bpmn-controls.js # File operations
-│       ├── bot-responder.js # AI assistant logic
-│       └── ui-manager.js   # UI management
-├── data/                   # Data files
-│   └── XMLs/
-│       └── base_bpmn_diagram.xml  # Default BPMN template
-├── main.py                 # FastAPI application entry point
-├── pyproject.toml          # Python project configuration
-├── uv.lock                 # UV package manager lock file
-├── .python-version         # Python version specification
-├── .gitattributes          # Git attributes
-├── LICENSE                 # MIT license
-└── README.md               # Project documentation
+│   │   └── style.css           # Modern styling
+│   └── js/                     # JavaScript modules
+│       ├── app.js              # Main application logic
+│       ├── bpmn-viewer.js      # BPMN viewer management
+│       ├── bpmn-controls.js    # File operations
+│       ├── bot-responder.js    # AI assistant logic
+│       └── ui-manager.js       # UI management
+├── data/                       # Data files
+│   ├── XMLs/                   # BPMN XML templates
+│   └── bpmn_schemas/           # JSON schemas for BPMN
+├── main.py                     # FastAPI application entry point
+├── pyproject.toml              # Python project configuration
+├── settings.py                 # Application settings
+└── README.md                   # Project documentation
 ```
 
 ## 🔄 CI/CD Pipeline
@@ -202,21 +218,26 @@ This project features a comprehensive CI/CD setup with GitHub Actions:
 - ✅ One-click deployment
 - ✅ Consistent development environment
 
-## 🏗️ Arhitecture (Expected)
+## 🏗️ Architecture
 
 ```bash
 ┌─────────────────────────────────────┐
 │  Frontend (bpmn-js)                 │
-│  - BPMN vizualization               │
+│  - BPMN visualization               │
 │  - Interactive editing              │
 │  - UI for AI-assistant              │
 └──────────────┬──────────────────────┘
                │ REST API
 ┌──────────────▼──────────────────────┐
 │  Backend (FastAPI)                  │
-│  - Storing BPMN XML in DB           │
-│  - AI XML code generation           │
-│  - Validation and transforming      │
+│  - API routes                       │
+│  - XML/JSON assemblers              │
+└──────────────┬──────────────────────┘
+               │
+┌──────────────▼──────────────────────┐
+│  AI Layer (LangGraph + OpenAI)      │
+│  - BPMN agent with state machine    │
+│  - LLM for natural language → BPMN  │
 └─────────────────────────────────────┘
 ```
 
@@ -238,12 +259,13 @@ Get the base BPMN XML structure
 
 - **Response**: `{"xml": "<bpmn:definitions>..."}`
 
-### POST /api/generate
+### GET /api/generate?user_input=
 
-Generate BPMN XML code (extendable)
+Generate BPMN XML code using AI
 
-- **Response**: JSON object with generation status
-- **Note**: Currently returns placeholder, ready for AI integration
+- **Parameters**: `user_input` (string) - Text description of the process
+- **Response**: `{"output": "<bpmn:definitions>..."}`
+- **Note**: Powered by LangGraph agent with Open router free tier models
 
 ## 📋 Scripts
 
@@ -290,7 +312,6 @@ This project is released under the MIT license. See the `LICENSE` file for detai
 - Requires an internet connection to load the bpmn-js library
 - Large diagrams may load slowly
 - No built‑in server‑side persistence
-- Visualization of complex BPMN diagrams can be cumbersome due to limited zoom and panning controls
 
 ## TO-DO's
 
@@ -301,11 +322,11 @@ This project is released under the MIT license. See the `LICENSE` file for detai
 - [x] Create modern web interface with bpmn-js
 - [x] Implement file upload/download functionality
 - [x] Add zoom and viewport controls
-- [x] Create basic AI chat interface
+- [x] Create AI chat interface with LangGraph
+- [x] Implement full AI assistant BPMN generation
 
 ### 🚧 In Progress
 
-- [ ] Implement full AI assistant BPMN generation
 - [ ] Implement XML code validation
 - [ ] Add database persistence for diagrams
 
