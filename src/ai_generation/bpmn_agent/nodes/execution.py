@@ -4,7 +4,7 @@ import asyncio
 
 from ..state import BPMNState
 from ...llm_client import LLMClient
-from ...managers.promt import PromptManager
+from ...managers.prompt import PromptManager
 from ...managers.json_schema import (
     JsonSchemaManager,
 )

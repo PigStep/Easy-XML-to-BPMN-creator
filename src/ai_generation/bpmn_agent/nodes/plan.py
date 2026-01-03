@@ -4,7 +4,7 @@ import re
 
 from ..state import BPMNState
 from src.ai_generation.llm_client import LLMClient
-from src.ai_generation.managers.promt import PromptManager
+from ai_generation.managers.prompt import PromptManager
 from src.ai_generation.managers.json_schema import JsonSchemaManager
 
 logger = logging.getLogger(__name__)

@@ -6,7 +6,7 @@ from src.ai_generation.managers.prompt import PromptManager
 from src.ai_generation.bpmn_agent.simple.state import SimpleBPMNAgent
 from src.ai_generation.bpmn_agent.simple.get_bpmn_node import generate_bpmn
 from src.schemas import SUserInputData
-
+from src.ai_generation.bpmn_agent.simple.imagine_procces_node import generate_process
 
 # Define managers and LLM client
 llm = get_llm_client()
@@ -15,6 +15,11 @@ agent_builder = StateGraph(SimpleBPMNAgent)
 
 
 # Define node with partial
+generate_process_with_config = partial(
+    generate_process,
+    llm=llm,
+    configuration=prompt_manager.get_call_config("business_generation"),
+)
 generate_bpmn_with_config = partial(
     generate_bpmn,
     llm=llm,
@@ -22,10 +27,12 @@ generate_bpmn_with_config = partial(
 )
 
 # Build workflow
+agent_builder.add_node("imagine", generate_process_with_config)
 agent_builder.add_node("generate", generate_bpmn_with_config)
 
 
-agent_builder.add_edge(START, "generate")
+agent_builder.add_edge(START, "imagine")
+agent_builder.add_edge("imagine", "generate")
 agent_builder.add_edge("generate", END)
 
 agent = agent_builder.compile()
