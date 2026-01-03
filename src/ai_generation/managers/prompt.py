@@ -14,12 +14,11 @@ class PromptManager:
     def __init__(self, prompt_dir: str = r"data/prompts"):
         self.prompt_dir = Path(prompt_dir)
 
-    def get_prompt(
+    def get_call_config(
         self,
         prompt_name: str,
-        prompt_type: Literal["system", "user"] = "user",
         **kwargs,
-    ) -> str | None:
+    ) -> dict:
         """
         Retrieves and renders a prompt template from a YAML file.
 
@@ -28,10 +27,6 @@ class PromptManager:
         promt_name : str
             The base name of the prompt file (without extension) located in
             ``self.prompt_dir``.
-        prompt_type : Literal["system", "user"], optional
-            The type of template to load.  The YAML file must contain a
-            ``templates`` mapping with keys ``system`` and ``user``.  Defaults
-            to ``"user"``.
         **kwargs
             Keyword arguments that will be passed to the Jinja2 template
             renderer.  These correspond to the variables used inside the
@@ -39,38 +34,46 @@ class PromptManager:
 
         Returns
         -------
-        str | None
-            The rendered prompt string if the file and template were
-            successfully loaded and rendered.  Returns ``None`` if the file
-            does not exist, cannot be parsed, or the requested template type
-            is missing.
+        dict
+            The rendered llm call configuration if the file and template were
+            successfully loaded and rendered.
         """
         file_path = self.prompt_dir / f"{prompt_name}.yaml"
 
-        data = self._load_yaml(file_path)
-
-        try:
-            raw_template = data["templates"][prompt_type]
-        except KeyError:
-            logger.error(f"Missing template type for {prompt_name}")
-            return None
-
-        template = Template(raw_template)
-        return template.render(**kwargs)
+        raw_data = self._load_file(file_path)
+        filled_data = self._render_yaml(raw_data, **kwargs)
+        return self._parse_yaml(filled_data)
 
     @staticmethod
     @lru_cache(maxsize=32)
-    def _load_yaml(file_path: Path) -> dict:
+    def _load_file(file_path: Path) -> str:
         try:
             with open(file_path, "r", encoding="utf-8") as file:
-                return yaml.safe_load(file) or {}
+                return file.read()
+        except Exception:
+            logger.error("Failed to load file at %s", file_path)
+            return ""
+
+    @staticmethod
+    def _parse_yaml(data: str) -> dict:
+        try:
+            return yaml.safe_load(data) or {}
         except Exception as e:
-            logger.error(f"Failed to load YAML at {file_path}: {e}")
+            logger.error("Failed to load YAML: %s", e)
             return {}
+
+    @staticmethod
+    def _render_yaml(data: str, **kwargs) -> dict:
+        """
+        Render a YAML dict as a Jinja2 template.
+
+        """
+        template = Template(data)
+        return template.render(**kwargs)
 
 
 manager = PromptManager()
 
 
-def get_prompt_manager() -> PromptManager:
+def get_basic_prompt_manager() -> PromptManager:
     return manager

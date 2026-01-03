@@ -17,6 +17,7 @@ class LLMClient:
         self,
         prompt: str,
         system_prompt: str,
+        temperature: float = 0.7,
         response_format: dict | None = None,
         extra_body: dict | None = None,
     ) -> str | None:
@@ -29,6 +30,8 @@ class LLMClient:
             The user prompt to send to the model.
         system_prompt : str
            The system prompt to send as the initial message to the model.
+        temperature : float, optional
+            Sampling temperature to use for response generation. Default is 0.7.
         response_format : dict | None, optional
             Response format specification. Example:
             ```
@@ -55,6 +58,7 @@ class LLMClient:
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": prompt},
             ],
+            temperature=temperature,
             response_format=response_format if response_format else None,
             extra_body=extra_body if extra_body else None,
         )
@@ -63,9 +67,8 @@ class LLMClient:
     def generate_response_json_based(
         self,
         prompt: str,
-        system_prompt: str,
         json_schema: dict,
-        system_promt: str,
+        system_prompt: str,
         reasoning_mode: Literal["none", "minimal", "low", "medium", "high"] = "none",
     ) -> str | None:
         """
@@ -92,7 +95,7 @@ class LLMClient:
         """
         return self._generate_response(
             prompt=prompt,
-            system_prompt=system_promt,
+            system_prompt=system_prompt,
             response_format={
                 "type": "json_schema",
                 "json_schema": {
@@ -108,13 +111,17 @@ class LLMClient:
         prompt: str,
         system_prompt: str,
         reasoning_mode: Literal["none", "minimal", "low", "medium", "high"] = "none",
+        temperature: float | None = None,
     ) -> str:
         """
         Generates a text-formatted response from the LLM based on the provided prompt.
         Offer a choice of reasoning effort levels.
         """
         return self._generate_response(
-            prompt, extra_body={"reasoning": {"effort": reasoning_mode}}
+            prompt,
+            system_prompt,
+            extra_body={"reasoning": {"effort": reasoning_mode}},
+            temperature=temperature,
         )
 
 

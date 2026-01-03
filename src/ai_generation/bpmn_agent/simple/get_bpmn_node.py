@@ -1,10 +1,21 @@
 from .state import SimpleBPMNAgent
 from ...llm_client import LLMClient
-from ...promts import XML_PROMPT
 
 
-def generate_bpmn(state: SimpleBPMNAgent, llm: LLMClient) -> SimpleBPMNAgent:
+def generate_bpmn(
+    state: SimpleBPMNAgent, llm: LLMClient, configuration: dict
+) -> SimpleBPMNAgent:
+    """Genrates XML code from instructions
+
+    Args:
+        state (SimpleBPMNAgent): state of agent
+        llm (LLMClient): llm client for content generation
+        configuration (dict): configuration for the llm call (system_prompt, temperature, ...)
+
+    Returns:
+        SimpleBPMNAgent: modified state with generated XML in 'previous_answer' field
+    """
     user_prompt = state["user_input"]
-    result = llm.generate_response_text_based(user_prompt, XML_PROMPT, "high")
+    result = llm.generate_response_text_based(user_prompt, **configuration)
 
     return {**state, "previous_answer": result}
