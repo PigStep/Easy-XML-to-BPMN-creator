@@ -129,6 +129,8 @@ _llm_client = None
 
 
 def get_llm_client():
+    global _llm_client
+
     if _llm_client is None:
         _raw_client = OpenAI(
             api_key=AI_API_KEY,
