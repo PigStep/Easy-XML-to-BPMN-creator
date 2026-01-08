@@ -8,7 +8,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from enum import Enum
 
 
-class Environment(str, Enum):
+class ENV_ENUM(str, Enum):
     DEV = "dev"
     PROD = "prod"
     TEST = "test"
@@ -17,9 +17,9 @@ class Environment(str, Enum):
 class Settings(BaseSettings):
     """Settings for the application"""
 
-    ENVIROMENT: Environment = Field(
-        default=Environment.DEV,
-        description="Environment setting (dev, prod, test)",
+    ENVIROMENT: ENV_ENUM = Field(
+        default=ENV_ENUM.DEV,
+        description="ENVIROMENT setting (dev, prod, test)",
     )
 
     # ==== OPEN ROUTER ====
@@ -63,13 +63,13 @@ class Settings(BaseSettings):
 
     @field_validator("ENVIROMENT", mode="before")
     @classmethod
-    def validate_environment(cls, v):
-        """Convert a string to an Environment enum"""
+    def validate_ENVIROMENT(cls, v):
+        """Convert a string to an ENVIROMENT enum"""
         if isinstance(v, str):
             v = v.lower()
-            if v not in [e.value for e in Environment]:
+            if v not in [e.value for e in ENV_ENUM]:
                 raise ValueError(
-                    f"Environment must be one of: {', '.join([e.value for e in Environment])}"
+                    f"ENVIROMENT must be one of: {', '.join([e.value for e in ENV_ENUM])}"
                 )
         return v
 
@@ -77,7 +77,7 @@ class Settings(BaseSettings):
     @classmethod
     def set_test_enviroment(cls, data):
         """Set defaults if env is for testing"""
-        current_env = os.getenv("ENVIRONMENT", "dev").lower()
+        current_env = os.getenv("ENVIROMENT", "dev").lower()
 
         if isinstance(data, dict) and "ENVIROMENT" in data:
             current_env = str(data["ENVIROMENT"]).lower()
@@ -90,9 +90,9 @@ class Settings(BaseSettings):
         return data
 
     @model_validator(mode="after")
-    def set_environment_defaults(self):
-        """Set default values based on the environment"""
-        if self.ENVIROMENT == Environment.PROD:
+    def set_ENVIROMENT_defaults(self):
+        """Set default values based on the ENVIROMENT"""
+        if self.ENVIROMENT == ENV_ENUM.PROD:
             self.DEBUG_MODE = False  # Always False in production
             if self.LOG_LEVEL == "DEBUG":
                 self.LOG_LEVEL = "INFO"  # Minimum INFO in production
@@ -101,21 +101,21 @@ class Settings(BaseSettings):
     # === PROPERTIES ====
     @property
     def is_dev(self) -> bool:
-        """Check if environment is dev"""
-        return self.ENVIROMENT == Environment.DEV
+        """Check if ENVIROMENT is dev"""
+        return self.ENVIROMENT == ENV_ENUM.DEV
 
     @property
     def is_prod(self) -> bool:
-        """Check if environment is prod"""
-        return self.ENVIROMENT == Environment.PROD
+        """Check if ENVIROMENT is prod"""
+        return self.ENVIROMENT == ENV_ENUM.PROD
 
     @property
     def is_test(self) -> bool:
-        """Check if environment is test"""
-        return self.ENVIROMENT == Environment.TEST
+        """Check if ENVIROMENT is test"""
+        return self.ENVIROMENT == ENV_ENUM.TEST
 
     model_config = SettingsConfigDict(
-        env_file=(".env.test" if os.getenv("ENVIRONMENT") == "test" else ".env"),
+        env_file=(".env.test" if os.getenv("ENVIROMENT") == "test" else ".env"),
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",

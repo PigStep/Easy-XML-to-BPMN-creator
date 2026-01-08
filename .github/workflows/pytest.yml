@@ -31,7 +31,7 @@ jobs:
         run: |
           .venv/bin/python -m pytest --cov=src --cov-report=term-missing --cov-report=html -v
         env:
-          ENVIRONMENT: test
+          ENVIROMENT: test
 
       - name: Upload coverage report
         if: always()
